@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ControlGasto</string>
+    <string name="promptConcepto">Elige un concepto</string>
+    <string-array name="arrayConcepto">
+        <item>Varios</item>
+        <item>Transporte</item>
+        <item>Supermercado</item>
+        <item>Ocio</item>
+    </string-array>
+    
+
+
+</resources>
