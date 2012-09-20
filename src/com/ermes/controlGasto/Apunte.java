@@ -16,10 +16,8 @@ public class Apunte {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + N_TABLA + " (" + ID_FILA
-                    + " INTEGER PRIMARY KEY AUTOINCREMENTE, " + ID_CANTIDAD + " INTEGER, "
-                    + ID_FECHA + " DATETIME DEFAULT CURRENT_TIMESTAMP," + ID_CONCEPTO
-                    + " TEXT NOT NULL);");
+            db.execSQL("CREATE TABLE " + N_TABLA + " (" + ID_FILA + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + ID_CANTIDAD + " INTEGER, " + ID_FECHA + " TEXT, " + ID_CONCEPTO + " TEXT NOT NULL);");
         }
 
         @Override
@@ -28,18 +26,17 @@ public class Apunte {
         }
     }
 
-    public static final String ID_FILA = "_id";
-    public static final String ID_FECHA = "_fecha";
-    public static final String ID_CANTIDAD = "_cantidad";
-    public static final String ID_CONCEPTO = "_concepto";
-    private static final String N_BBDD = "Gasto";
-    private static final String N_TABLA = "tGasto";
+    public static final String  ID_FILA      = "_id";
+    public static final String  ID_FECHA     = "_fecha";
+    public static final String  ID_CANTIDAD  = "_cantidad";
+    public static final String  ID_CONCEPTO  = "_concepto";
+    private static final String N_BBDD       = "Gasto";
+    private static final String N_TABLA      = "tGasto";
+    private static final int    VERSION_BBDD = 1;
+    private BDHelper            nHelper;
+    private final Context       nContext;
 
-    private static final int VERSION_BBDD = 1;
-    private BDHelper nHelper;
-    private final Context nContext;
-
-    private SQLiteDatabase nBBDD;
+    private SQLiteDatabase      nBBDD;
 
     public Apunte(Context c) {
         nContext = c;
@@ -47,7 +44,7 @@ public class Apunte {
 
     public Apunte abrir() {
         nHelper = new BDHelper(nContext);
-        nBBDD = nHelper.getReadableDatabase();
+        nBBDD = nHelper.getWritableDatabase();
         return this;
     }
 
@@ -59,27 +56,29 @@ public class Apunte {
         nHelper.close();
     }
 
-    public long crearApunte(String cantidad, String concepto) {
+    public long crearApunte(String cantidad, String fecha, String concepto) {
         // Date d = new Date(cursor.getLong(DATE_FIELD_INDEX));
         ContentValues cv = new ContentValues();
 
         cv.put(ID_CANTIDAD, cantidad);
+        cv.put(ID_FECHA, fecha);
         cv.put(ID_CONCEPTO, concepto);
         return nBBDD.insert(N_TABLA, null, cv);
     }
 
     public String listarApuntes() {
-        String[] columnas = new String[] { ID_FILA, ID_CANTIDAD, ID_CONCEPTO };
+        String[] columnas = new String[] { ID_FILA, ID_CANTIDAD, ID_FECHA, ID_CONCEPTO };
         Cursor c = nBBDD.query(N_TABLA, columnas, null, null, null, null, null);
         String resultado = "";
 
         int iFila = c.getColumnIndex(ID_FILA);
         int iCantidad = c.getColumnIndex(ID_CANTIDAD);
+        int iFecha = c.getColumnIndex(ID_FECHA);
         int iConcepto = c.getColumnIndex(ID_CONCEPTO);
 
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-            resultado = resultado + c.getString(iFila) + " " + c.getString(iConcepto) + " "
-                    + c.getString(iCantidad);
+            resultado = resultado + c.getString(iFila) + " " + c.getString(iFecha) + " " + c.getString(iConcepto) + " "
+                    + c.getString(iCantidad) + "\n";
         }
 
         return resultado;
