@@ -41,7 +41,24 @@
         <TextView
             android:id="@+id/txtTotal"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent" />
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/txtCantidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            />
+
+        <TableLayout
+            android:id="@+id/tbCantidad"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        >
+         <TableRow
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content">
+        </TableRow>
+       </TableLayout>
 
     </LinearLayout>
 

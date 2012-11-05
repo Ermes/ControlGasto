@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,12 +23,14 @@ import android.widget.Toast;
 
 public class ControlGastoActivity extends Activity implements OnClickListener, OnKeyListener {
 
-    EditText                   gasto;
-    Button                     ingresar;
-    TextView                   total;
-    Spinner                    concepto;
+    EditText gasto;
+    Button ingresar;
+    TextView total, cantidad;
+    Spinner concepto;
     ArrayAdapter<CharSequence> adaptador;
-    Date                       fecha = new Date();
+    Date fecha = new Date();
+    String fechaFormat = (String) DateFormat.format("dd-MM-yy hh:mm", fecha);
+    private static final int MES = 10;
 
     public void accion() {
         boolean funciona = true;
@@ -38,7 +41,7 @@ public class ControlGastoActivity extends Activity implements OnClickListener, O
         try {
             Apunte entrada = new Apunte(ControlGastoActivity.this);
             entrada.abrir();
-            entrada.crearApunte(gasto.getText().toString(), fecha.toString(), concepto.getSelectedItem().toString());
+            entrada.crearApunte(gasto.getText().toString(), fecha.getTime(), concepto.getSelectedItem().toString());
             entrada.cerrar();
 
         } catch (Exception e) {
@@ -54,16 +57,16 @@ public class ControlGastoActivity extends Activity implements OnClickListener, O
         } finally {
             if (funciona) {
 
-                Dialog d = new Dialog(this);
-                d.setTitle("OK !!!");
-                TextView tv = new TextView(this);
-                tv.setText("el concepto es " + concepto.getSelectedItem() + " y la fecha es " + fecha);
-                d.setContentView(tv);
-                d.show();
-
+                /*
+                 * Dialog d = new Dialog(this); d.setTitle("OK !!!"); TextView
+                 * tv = new TextView(this); tv.setText("el concepto es " +
+                 * concepto.getSelectedItem() + " la fecha es " + fechaFormat);
+                 * d.setContentView(tv); d.show();
+                 */
                 Apunte entrada = new Apunte(ControlGastoActivity.this);
                 entrada.abrir();
                 total.setText(entrada.listarApuntes());
+                cantidad.setText("Total acumulado: " + entrada.CANTIDAD);
                 entrada.cerrar();
 
             }
@@ -71,9 +74,10 @@ public class ControlGastoActivity extends Activity implements OnClickListener, O
 
     }
 
+    @Override
     public void onClick(View arg0) {
         if (gasto.getText().toString().equals("")) {
-            Toast.makeText(this, "Debes rellenar el salario bruto anual", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Debes rellenar la cantidad del gasto", Toast.LENGTH_SHORT).show();
         } else {
             accion();
         }
@@ -88,15 +92,16 @@ public class ControlGastoActivity extends Activity implements OnClickListener, O
         gasto = (EditText) findViewById(R.id.txtGasto);
         ingresar = (Button) findViewById(R.id.btnIngresar);
         total = (TextView) findViewById(R.id.txtTotal);
+        cantidad = (TextView) findViewById(R.id.txtCantidad);
 
         adaptador = ArrayAdapter.createFromResource(this, R.array.arrayConcepto, android.R.layout.simple_spinner_item);
         adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         concepto.setAdapter(adaptador);
 
         ingresar.setGravity(Gravity.LEFT);
-
         ingresar.setOnClickListener(this);
         gasto.setOnKeyListener(this);
+        cantidad.setGravity(Gravity.RIGHT);
     }
 
     @Override
@@ -105,6 +110,7 @@ public class ControlGastoActivity extends Activity implements OnClickListener, O
         return true;
     }
 
+    @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
             accion();
